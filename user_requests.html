@@ -1,0 +1,114 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - User Requests</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="bg-gray-800 text-white w-64 h-screen">
+            <div class="text-white text-2xl font-bold p-4 bg-blue-600">
+                Admin Panel
+            </div>
+            <nav class="mt-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_manufacturers') }}">
+                            <i class="fas fa-industry"></i>
+                            <span>Make</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_models') }}">
+                            <i class="fas fa-car"></i>
+                            <span>Models</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_locations') }}">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('user_requests') }}">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_products') }}">
+                            <i class="fas fa-box"></i>
+                            <span>Products</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_services') }}">
+                            <i class="fas fa-concierge-bell"></i>
+                            <span>Services</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_blog') }}">
+                            <i class="fas fa-blog"></i>
+                            <span>Blog</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <h2 class="text-2xl font-bold mb-6">User Requests</h2>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <table class="min-w-full bg-white">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b border-gray-200">Request ID</th>
+                            <th class="py-2 px-4 border-b border-gray-200">Manufacturer</th>
+                            <th class="py-2 px-4 border-b border-gray-200">Model</th>
+                            <th class="py-2 px-4 border-b border-gray-200">Location</th>
+                            <th class="py-2 px-4 border-b border-gray-200">Phone</th>
+                            <th class="py-2 px-4 border-b border-gray-200">Request Time</th>
+                            <th class="py-2 px-4 border-b border-gray-200">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in user_requests %}
+                        <tr>
+                            <td class="py-2 px-4 border-b border-gray-200">{{ request[0] }}</td>
+                            <td class="py-2 px-4 border-b border-gray-200">{{ request[1] }}</td>
+                            <td class="py-2 px-4 border-b border-gray-200">{{ request[2] }}</td>
+                            <td class="py-2 px-4 border-b border-gray-200">{{ request[3] }}</td>
+                            <td class="py-2 px-4 border-b border-gray-200">{{ request[4] }}</td>
+                            <td class="py-2 px-4 border-b border-gray-200">{{ request[5] }}</td>
+                            <td class="py-2 px-4 border-b border-gray-200">
+                                <form action="{{ url_for('delete_request', request_id=request[0]) }}" method="POST">
+                                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Edit Product</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="font-roboto bg-gray-100">
+    <div class="flex">
+        <!-- Sidebar (same as before) -->
+        <main class="flex-1 p-6">
+            <h2 class="text-2xl font-bold mb-4">Edit Product</h2>
+
+            <form action="{{ url_for('edit_product', product_id=product['product_id']) }}" method="POST" enctype="multipart/form-data">
+                <div class="space-y-4">
+                    <div>
+                        <label for="name" class="block font-semibold">Product Name</label>
+                        <input type="text" id="name" name="name" class="w-full px-4 py-2 border rounded" value="{{ product['name'] }}" required>
+                    </div>
+
+                    <div>
+                        <label for="description" class="block font-semibold">Description</label>
+                        <textarea id="description" name="description" class="w-full px-4 py-2 border rounded">{{ product['description'] }}</textarea>
+                    </div>
+
+                    <div>
+                        <label for="price" class="block font-semibold">Price</label>
+                        <input type="number" id="price" name="price" class="w-full px-4 py-2 border rounded" value="{{ product['price'] }}" required>
+                    </div>
+
+                    <div>
+                        <label for="quantity" class="block font-semibold">Quantity</label>
+                        <input type="number" id="quantity" name="quantity" class="w-full px-4 py-2 border rounded" value="{{ product['quantity'] }}" required>
+                    </div>
+
+                    <div>
+                        <label for="category_id" class="block font-semibold">Category</label>
+                        <select id="category_id" name="category_id" class="w-full px-4 py-2 border rounded" required>
+                            {% for category in categories %}
+                                <option value="{{ category['category_id'] }}" {% if category['category_id'] == product['category_id'] %} selected {% endif %}>
+                                    {{ category['category_name'] }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="manufacturer_id" class="block font-semibold">Manufacturer</label>
+                        <select id="manufacturer_id" name="manufacturer_id" class="w-full px-4 py-2 border rounded" required>
+                            {% for manufacturer in manufacturers %}
+                                <option value="{{ manufacturer['manufacturer_id'] }}" {% if manufacturer['manufacturer_id'] == product['manufacturer_id'] %} selected {% endif %}>
+                                    {{ manufacturer['name'] }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="model_id" class="block font-semibold">Model</label>
+                        <select id="model_id" name="model_id" class="w-full px-4 py-2 border rounded" required>
+                            {% for model in models %}
+                                <option value="{{ model['model_id'] }}" {% if model['model_id'] == product['model_id'] %} selected {% endif %}>
+                                    {{ model['ModelName'] }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="brand" class="block font-semibold">Brand</label>
+                        <input type="text" id="brand" name="brand" class="w-full px-4 py-2 border rounded" value="{{ product['brand'] }}" required>
+                    </div>
+
+                    <div>
+                        <label for="item_code" class="block font-semibold">Item Code</label>
+                        <input type="text" id="item_code" name="item_code" class="w-full px-4 py-2 border rounded" value="{{ product['item_code'] }}" required>
+                    </div>
+
+                    <div>
+                        <label for="image_url" class="block font-semibold">Image</label>
+                        <input type="file" id="image_url" name="image_url" class="w-full px-4 py-2 border rounded">
+                    </div>
+
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update Product</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#manufacturer_id').change(function () {
+                var manufacturerId = $(this).val();
+                if (manufacturerId) {
+                    $.ajax({
+                        url: '/product_get_models/' + manufacturerId,
+                        method: 'GET',
+                        success: function (data) {
+                            $('#model_id').empty();
+                            $.each(data, function (index, model) {
+                                $('#model_id').append('<option value="' + model.model_id + '">' + model.ModelName + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#model_id').empty();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

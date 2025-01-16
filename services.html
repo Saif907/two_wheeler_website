@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Mechanic Services</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .hover-highlight:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        #cart-message {
+            display: none;
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        #cart-items {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            width: 70%;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .modal-close {
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4">
+        <div class="container mx-auto flex justify-between items-center px-5">
+            <div class="flex items-center">
+                <img alt="Logo" class="h-10 w-10 mr-2" src="https://placehold.co/40x40" />
+                <span class="text-white text-xl font-bold">My Mechanic</span>
+            </div>
+            <div class="hidden md:flex space-x-4">
+                <a class="text-white flex items-center hover-highlight" href="/"><i class="fas fa-home mr-1"></i>Home</a>
+                <a class="text-white flex items-center hover-highlight" href="blog"><i class="fas fa-blog mr-1"></i>Blog</a>
+                <a class="text-white flex items-center hover-highlight" href="shop"><i class="fas fa-shopping-cart mr-1"></i>Shop</a>
+                <a class="text-white flex items-center hover-highlight" href="#"><i class="fas fa-ellipsis-h mr-1"></i>More</a>
+                <a class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700" href="#">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sub Navbar -->
+    <div class="bg-white shadow">
+        <div class="container mx-auto flex justify-between items-center py-2 px-5">
+            {% for category in categories %}
+                <a href="?manufacturer_id={{ request.args.get('manufacturer_id') }}&model_id={{ request.args.get('model_id') }}&location_id={{ request.args.get('location_id') }}&category_id={{ category[0] }}" 
+                   class="text-black flex items-center hover-highlight px-2">
+                    <i class="fas fa-motorcycle mr-1"></i>{{ category[1] }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto mt-6 flex flex-col md:flex-row px-4">
+        <!-- Services Section -->
+        <div class="w-full md:w-3/4">
+            <h2 class="text-2xl font-bold mb-4">Available Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for service in services %}
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <img alt="{{ service[1] }}" class="w-full h-48 object-cover" src="{{ url_for('static', filename=service[5]) }}" />
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold">{{ service[1] }}</h3>
+                            <p class="text-gray-600">{{ service[2] }}</p>
+                            <p class="text-gray-800 font-bold mt-2">Price: ₹{{ service[3] }}</p>
+                            <p class="text-gray-600">Duration: {{ service[4] }} hrs</p>
+                            <button class="bg-red-600 text-white w-full mt-4 py-2 rounded add-to-cart hover:bg-red-700" 
+                                    data-service="{{ service[0] }}" 
+                                    data-price="{{ service[3] }}"
+                                    data-name="{{ service[1] }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Cart Section -->
+        <div class="w-full md:w-1/4 md:pl-4 mt-6 md:mt-0">
+            <div class="bg-white rounded-lg shadow-lg p-4 sticky top-6" id="cart">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-shopping-cart mr-2 text-blue-600"></i>Cart
+                </h2>
+                <ul class="list-disc pl-5" id="cart-items"></ul>
+                <div class="mt-4">
+                    <p class="font-bold">Total: ₹<span id="cart-total">0.00</span></p>
+                </div>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-700" id="view-cart">
+                    View Cart
+                </button>
+                <!-- Success Message -->
+                <div id="cart-message">Item added to cart!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Cart -->
+    <div id="cart-modal" class="modal flex">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold">Your Cart</h3>
+                <span class="modal-close text-xl cursor-pointer">&times;</span>
+            </div>
+            <ul class="list-disc pl-5" id="modal-cart-items"></ul>
+            <div class="mt-4">
+                <p class="font-bold">Total: ₹<span id="modal-cart-total">0.00</span></p>
+            </div>
+            <button class="bg-green-600 text-white px-4 py-2 rounded mt-4 w-full hover:bg-green-700" id="checkout-button">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Fetch cart items from the backend
+        function loadCart() {
+            fetch('/get_cart')
+                .then(response => response.json())
+                .then(cartData => {
+                    const cartItemsContainer = document.getElementById('cart-items');
+                    const cartTotalContainer = document.getElementById('cart-total');
+                    cartItemsContainer.innerHTML = '';
+
+                    let totalPrice = 0;
+                    cartData.forEach(item => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('cart-item');
+                        listItem.innerHTML = `
+                            <span>${item.service_name} - ₹${item.price}</span>
+                            <button class="remove-from-cart text-red-500 ml-4" data-service="${item.service_id}">Remove</button>
+                        `;
+                        cartItemsContainer.appendChild(listItem);
+                        totalPrice += parseFloat(item.price);
+                    });
+
+                    cartTotalContainer.innerText = totalPrice.toFixed(2);
+                });
+        }
+
+        // Open the modal to view cart
+        document.getElementById('view-cart').addEventListener('click', function() {
+            const cartModal = document.getElementById('cart-modal');
+            const modalCartItemsContainer = document.getElementById('modal-cart-items');
+            const modalCartTotalContainer = document.getElementById('modal-cart-total');
+
+            fetch('/get_cart')
+                .then(response => response.json())
+                .then(cartData => {
+                    modalCartItemsContainer.innerHTML = '';
+
+                    let totalPrice = 0;
+                    cartData.forEach(item => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `${item.service_name} - ₹${item.price}`;
+                        modalCartItemsContainer.appendChild(listItem);
+                        totalPrice += parseFloat(item.price);
+                    });
+
+                    modalCartTotalContainer.innerText = totalPrice.toFixed(2);
+                    cartModal.style.display = 'flex';
+                });
+        });
+
+        // Close the modal
+        document.querySelector('.modal-close').addEventListener('click', function() {
+            document.getElementById('cart-modal').style.display = 'none';
+        });
+
+        // Handle Add to Cart
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('add-to-cart')) {
+                const serviceId = event.target.getAttribute('data-service');
+                const price = event.target.getAttribute('data-price');
+                const serviceName = event.target.getAttribute('data-name');
+
+                // Add item to the cart in the backend
+                fetch('/add_to_cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        service_id: serviceId,
+                        price: price
+                    })
+                })
+                .then(response => response.text())
+                .then(message => {
+                    // Show success message and update cart display
+                    const messageElem = document.getElementById('cart-message');
+                    messageElem.innerText = 'Item added to cart!';
+                    messageElem.style.display = 'block';
+                    setTimeout(() => {
+                        messageElem.style.display = 'none';
+                    }, 3000);
+
+                    loadCart();
+                });
+            }
+
+            if (event.target.classList.contains('remove-from-cart')) {
+                const serviceId = event.target.getAttribute('data-service');
+
+                // Remove item from the cart in the backend
+                fetch('/remove_from_cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        service_id: serviceId
+                    })
+                })
+                .then(response => response.text())
+                .then(message => {
+                    // Show success message and update cart display
+                    const messageElem = document.getElementById('cart-message');
+                    messageElem.innerText = 'Item removed from cart!';
+                    messageElem.style.display = 'block';
+                    setTimeout(() => {
+                        messageElem.style.display = 'none';
+                    }, 3000);
+
+                    loadCart();
+                });
+            }
+        });
+
+        // Checkout Button Click
+        document.getElementById('checkout-button').addEventListener('click', function() {
+            window.location.href = "/checkout";  // Redirect to checkout page
+        });
+
+        // Load cart on page load
+        window.onload = loadCart;
+    </script>
+</body>
+</html>

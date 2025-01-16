@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Manage Blogs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-roboto bg-gray-100">
+
+<div class="flex">
+    <!-- Sidebar -->
+    <aside class="bg-gray-800 text-white w-64 h-screen">
+        <div class="text-white text-2xl font-bold p-4 bg-blue-600">
+            Admin Panel
+        </div>
+        <nav class="mt-4">
+            <ul class="space-y-2">
+                <li>
+                    <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_manufacturers') }}">
+                        <i class="fas fa-industry"></i>
+                        <span>Make</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_models') }}">
+                        <i class="fas fa-car"></i>
+                        <span>Models</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_locations') }}">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Locations</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('user_requests') }}">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_products') }}">
+                        <i class="fas fa-box"></i>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_services') }}">
+                        <i class="fas fa-concierge-bell"></i>
+                        <span>Services</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_blog') }}">
+                        <i class="fas fa-blog"></i>
+                        <span>Blog</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">Blogs</h2>
+            <div class="flex space-x-4">
+                <!-- Search Bar -->
+                <form method="get" action="{{ url_for('manage_blog') }}" class="flex space-x-4">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        value="{{ search_query|default('') }}" 
+                        placeholder="Search..." 
+                        class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    >
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
+                <a href="{{ url_for('add_blog') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    <i class="fas fa-plus"></i> Add Blog
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for blog in blogs %}
+            <div class="bg-white p-4 rounded-lg shadow">
+                <img src="{{ blog.image_url }}" alt="Image for {{ blog.title }}" class="w-full h-40 object-cover rounded">
+                <h3 class="text-lg font-semibold mt-4">{{ blog.title }}</h3>
+                <p class="text-gray-600 truncate">{{ blog.content }}</p>
+                <div class="mt-2 flex space-x-2">
+                    <a href="{{ url_for('edit_blog', blog_id=blog['blog_id']) }}" class="text-blue-600 hover:underline">Edit</a>
+                    <a href="{{ url_for('delete_blog', blog_id=blog['blog_id']) }}" class="text-red-600 hover:underline">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spare Parts Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-roboto bg-gray-100">
+  <header class="bg-white shadow">
+    <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-800">MyMechanic Store</h1>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row">
+      <aside class="w-full md:w-1/4 mb-8 md:mb-0 border-r border-gray-300 pr-4">
+        <h2 class="text-xl font-bold mb-4">Filters</h2>
+        <form id="filter-form">
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-2">Manufacturer</h3>
+            <select id="manufacturer-select" class="w-full p-2 border border-gray-300 rounded">
+              <option value="">Select Manufacturer</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-2">Model</h3>
+            <select id="model-select" class="w-full p-2 border border-gray-300 rounded">
+              <option value="">Select Model</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-2">Categories</h3>
+            <select id="category-select" class="w-full p-2 border border-gray-300 rounded">
+              <option value="">Select Category</option>
+            </select>
+          </div>
+        </form>
+      </aside>
+
+      <section class="w-full md:w-3/4 pl-4">
+        <h2 class="text-xl font-bold mb-4">Products</h2>
+        <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="bg-white shadow mt-8">
+    <div class="container mx-auto px-4 py-6 text-center">
+      <p class="text-gray-600">© 2023 Spare Parts Store. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const fetchData = async (url) => {
+      const response = await fetch(url);
+      return response.json();
+    };
+
+    const populateSelect = (selectId, data) => {
+      const select = document.getElementById(selectId);
+      select.innerHTML = '<option value="">Select</option>';
+      data.forEach(item => {
+        select.innerHTML += `<option value="${item.id}">${item.name}</option>`;
+      });
+    };
+
+    const loadFilters = async () => {
+      const manufacturers = await fetchData('/api/manufacturers');
+      populateSelect('manufacturer-select', manufacturers);
+
+      const categories = await fetchData('/api/categories');
+      populateSelect('category-select', categories);
+    };
+
+    const loadProducts = async () => {
+      const manufacturerId = document.getElementById('manufacturer-select').value;
+      const modelId = document.getElementById('model-select').value;
+      const categoryId = document.getElementById('category-select').value;
+
+      const params = new URLSearchParams({ manufacturer_id: manufacturerId, model_id: modelId, category_id: categoryId });
+      const products = await fetchData(`/api/products?${params.toString()}`);
+
+      const productList = document.getElementById('product-list');
+      productList.innerHTML = '';
+
+      products.forEach(product => {
+        productList.innerHTML += `
+          <div class="bg-white p-4 rounded-lg shadow">
+            <img src="${product.image_url}" alt="${product.name}" class="w-full h-40 object-cover mb-4">
+            <h3 class="text-lg font-semibold mb-2">${product.name}</h3>
+            <p class="text-gray-600 mb-2">${product.description}</p>
+            <p class="text-blue-500 font-bold mb-2">₹${product.price}</p>
+            <button class="bg-blue-500 text-white px-4 py-2 rounded">Add to Cart</button>
+          </div>
+        `;
+      });
+    };
+
+    document.getElementById('manufacturer-select').addEventListener('change', async (e) => {
+      const manufacturerId = e.target.value;
+      const models = await fetchData(`/api/models/${manufacturerId}`);
+      populateSelect('model-select', models);
+    });
+
+    document.getElementById('filter-form').addEventListener('change', loadProducts);
+
+    loadFilters();
+    loadProducts();
+  </script>
+</body>
+</html>

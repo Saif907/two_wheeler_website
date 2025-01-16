@@ -1,0 +1,127 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Admin Panel - Manage Services</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+        font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="bg-gray-800 text-white w-64 h-screen">
+      <div class="text-white text-2xl font-bold p-4 bg-blue-600">
+        Admin Panel
+      </div>
+      <nav class="mt-4">
+        <ul class="space-y-2">
+          <li>
+            <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('admin_dashboard') }}">
+              <i class="fas fa-tachometer-alt"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_manufacturers') }}">
+              <i class="fas fa-industry"></i>
+              <span>Make</span>
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_models') }}">
+              <i class="fas fa-car"></i>
+              <span>Models</span>
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_locations') }}">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Locations</span>
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('user_requests') }}">
+              <i class="fas fa-users"></i>
+              <span>Users</span>
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_products') }}">
+              <i class="fas fa-box"></i>
+              <span>Products</span>
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_services') }}">
+              <i class="fas fa-concierge-bell"></i>
+              <span>Services</span>
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_blog') }}">
+              <i class="fas fa-blog"></i>
+              <span>Blog</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <h2 class="text-2xl font-bold mb-6">Manage Services</h2>
+      <div class="mb-4 flex justify-between items-center">
+        <a class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" href="{{ url_for('add_service') }}">
+          Add New Service
+        </a>
+        <div class="flex space-x-2">
+          <input class="border border-gray-300 rounded px-4 py-2" placeholder="Search services..." type="text"/>
+          <button class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+            Filter
+          </button>
+        </div>
+      </div>
+
+      <!-- Services Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Service Cards Loop -->
+        {% for service in services %}
+        <div class="bg-white p-4 rounded-lg shadow">
+          <img alt="Service Image" class="w-full h-48 object-cover rounded-t-lg" 
+          src="{{ url_for('static', filename=service.image_url) if service.image_url else 'https://placehold.co/300x200' }}"/>
+
+          <div class="p-4">
+            <h3 class="text-lg font-semibold">{{ service.name }}</h3>
+            <p class="text-gray-600">{{ service.description }}</p>
+            <p class="text-gray-600">Model: {{ service.model_name }}</p>
+            <p class="text-gray-600">Category: {{ service.category_name }}</p>
+            <p class="text-gray-600">Price: ₹{{ service.price }}</p>
+            <p class="text-gray-600">Duration: {{ service.duration }} hrs</p>
+            <div class="mt-4 flex space-x-4">
+              <a class="text-blue-600 hover:underline" href="{{ url_for('edit_service', service_id=service.service_id) }}">
+                Edit
+              </a>
+              <a class="text-red-600 hover:underline" href="{{ url_for('delete_service', service_id=service.service_id) }}">
+                Delete
+              </a>
+            </div>
+            <!-- Hidden Columns -->
+            <div class="hidden">
+              <p class="text-gray-600">Manufacturer: {{ service.manufacturer_name }}</p>
+              
+              <p class="text-gray-600">Location: {{ service.location_name }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </main>
+  </div>
+</body>
+</html>

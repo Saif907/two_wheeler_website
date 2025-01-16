@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Add Product</h2>
+        <form action="/admin/manage_products/add_product" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <select class="form-control" id="category" name="category_id" required>
+                    <option value="">Select Category</option>
+                    {% for category in categories %}
+                        <option value="{{ category[0] }}">{{ category[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="manufacturer">Manufacturer:</label>
+                <select class="form-control" id="manufacturer" name="manufacturer_id" required>
+                    <option value="">Select Manufacturer</option>
+                    {% for manufacturer in manufacturers %}
+                        <option value="{{ manufacturer[0] }}">{{ manufacturer[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="model">Model:</label>
+                <select class="form-control" id="model" name="model_id" required>
+                    <option value="">Select Model</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Product Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" id="description" name="description"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" class="form-control" id="price" name="price" required>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" required>
+            </div>
+
+            <div class="form-group">
+                <label for="item_code">Item Code:</label>
+                <input type="text" class="form-control" id="item_code" name="item_code" required>
+            </div>
+
+            <div class="form-group">
+                <label for="image_url">Product Image:</label>
+                <input type="file" class="form-control" id="image_url" name="image_url">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Product</button>
+        </form>
+    </div>
+
+    <script>
+        // Fetch models when manufacturer is selected
+        $('#manufacturer').change(function() {
+            var manufacturer_id = $(this).val();
+            if (manufacturer_id) {
+                $.get('/admin/manage_products/get_models/' + manufacturer_id, function(data) {
+                    var modelSelect = $('#model');
+                    modelSelect.empty();
+                    modelSelect.append('<option value="">Select Model</option>');
+                    data.forEach(function(model) {
+                        modelSelect.append('<option value="' + model.model_id + '">' + model.ModelName + '</option>');
+                    });
+                });
+            } else {
+                $('#model').empty().append('<option value="">Select Model</option>');
+            }
+        });
+    </script>
+</body>
+</html>

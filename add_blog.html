@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-roboto bg-gray-100 p-6">
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
+        <h2 class="text-2xl font-bold mb-6">Add New Blog</h2>
+        <form action="{{ url_for('add_blog') }}" method="post">
+            <div class="mb-4">
+                <label class="block font-medium">Title</label>
+                <input name="title" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium">Content</label>
+                <textarea name="content" class="w-full border rounded p-2" rows="5" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium">Image URL</label>
+                <input name="image_url" class="w-full border rounded p-2">
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add Blog</button>
+        </form>
+    </div>
+</body>
+</html>

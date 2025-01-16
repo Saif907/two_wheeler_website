@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Scooty Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        /* Dropdown hidden by default */
+        .dropdown-menu {
+            display: none;
+        }
+
+        /* Show dropdown when parent is hovered */
+        .group:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* Adjust dropdown position */
+        .group {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%; /* Directly below the More button */
+            left: 0;
+            z-index: 10;
+            min-width: 100%; /* Matches the width of the parent */
+        }
+
+        /* Remove any gap or unwanted space */
+        .group:hover {
+            cursor: pointer;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-gray-800 text-white p-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <img alt="My Mechanic Logo" class="mr-2" height="40" src="https://storage.googleapis.com/a1aa/image/rcoLJHV4rvp2BhXrJVzZuIHemGYf29fD96GJJjzck5iTWxCoA.jpg" width="40"/>
+            <span class="text-xl font-bold">My Mechanic</span>
+        </div>
+        <nav class="flex items-center space-x-4">
+            <a class="text-white flex items-center" href="">
+                <i class="fas fa-home mr-2"></i>Home
+            </a>
+            <a class="text-white flex items-center" href="blog">
+                <i class="fas fa-blog mr-2"></i>Blog
+            </a>
+            <div class="relative group">
+                <a class="text-white flex items-center">
+                    <i class="fas fa-ellipsis-h mr-2"></i>More
+                </a>
+                <div class="absolute dropdown-menu bg-white text-gray-800 shadow-lg rounded">
+                    <a class="block px-4 py-2 hover:bg-gray-200" href="faq">FAQ</a>
+                    <a class="block px-4 py-2 hover:bg-gray-200" href="shop">Products</a>
+                    <a class="block px-4 py-2 hover:bg-gray-200" href="contact">Contact us</a>
+                </div>
+            </div>
+            <a class="text-white flex items-center" href="shop">
+                <i class="fas fa-store mr-2"></i>Shop
+            </a>
+            <button class="bg-red-600 text-white px-4 py-2 rounded" id="loginButton">Login</button>
+        </nav>
+    </header>
+
+    <main class="flex flex-col lg:flex-row items-center justify-center lg:justify-between p-8 lg:p-16 bg-gray-200">
+        <div class="relative w-full lg:w-1/2 h-96 lg:h-auto">
+            <img alt="A guy servicing a scooty with tools around" class="w-full h-full object-cover" height="600" src="https://storage.googleapis.com/a1aa/image/QoSzStKebMU2WKBNpTzZCeijcGzo0s5ifxkrUCh6thbWWxCoA.jpg" width="800"/>
+        </div>
+        <div class="bg-white p-8 shadow-lg rounded-lg w-full lg:w-1/3 mt-8 lg:mt-0">
+            <h1 class="text-2xl font-bold mb-4">Experience The Best Two wheeler Services</h1>
+            <p class="mb-4">Get instant quotes for your scooty service</p>
+            <form action="/submit" method="POST">
+                <div class="mb-4">
+                    <select name="manufacturer_id" id="manufacturer_id" class="w-full p-2 border border-gray-300 rounded">
+                        <option value="">Select Manufacturer</option>
+                        {% for manufacturer in manufacturers %}
+                            <option value="{{ manufacturer[0] }}">{{ manufacturer[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-4" id="models_div">
+                    <select name="model_id" id="model_id" class="w-full p-2 border border-gray-300 rounded">
+                        <option value="">Select Model</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <input name="phone_number" class="w-full p-2 border border-gray-300 rounded" placeholder="Enter Mobile Number" type="text"/>
+                </div>
+
+                <button class="w-full bg-red-600 text-white p-2 rounded" type="submit">Check Prices for Free</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Sidebar -->
+    <div class="fixed top-0 right-0 w-64 h-full bg-white shadow-lg p-4 sidebar" id="sidebar">
+        <h2 class="text-xl font-bold mb-4">Login</h2>
+        <form action="/login" method="POST">
+            <div class="mb-4">
+                <input class="w-full p-2 border border-gray-300 rounded" name="phone_number" placeholder="Enter Mobile Number" type="text"/>
+            </div>
+            <button class="w-full bg-red-600 text-white p-2 rounded" type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        // Toggle sidebar visibility when login button is clicked
+        document.getElementById("loginButton").addEventListener("click", function() {
+            document.getElementById("sidebar").classList.toggle("active");
+        });
+
+        // Close sidebar when clicking outside of it
+        document.addEventListener("click", function(event) {
+            const sidebar = document.getElementById("sidebar");
+            const loginButton = document.getElementById("loginButton");
+            if (!sidebar.contains(event.target) && !loginButton.contains(event.target)) {
+                sidebar.classList.remove("active");
+            }
+        });
+
+        // Handle manufacturer change to load models
+        document.getElementById("manufacturer_id").addEventListener("change", function() {
+            const manufacturerId = this.value;
+            if (manufacturerId) {
+                fetch("/get_models", {
+                    method: "POST",
+                    body: new URLSearchParams({manufacturer_id: manufacturerId}),
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("models_div").innerHTML = data;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

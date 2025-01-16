@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Model</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-900 h-screen">
+            <div class="p-4 text-white text-2xl font-bold bg-blue-600">
+                Admin Panel
+            </div>
+            <nav class="mt-4">
+                <a href="/admin" class="flex items-center p-4 text-white hover:bg-gray-700">Dashboard</a>
+                <a href="/admin/manufacturers" class="flex items-center p-4 text-white hover:bg-gray-700">Manufacturers</a>
+                <a href="/admin/models" class="flex items-center p-4 text-white hover:bg-gray-700">Models</a>
+            </nav>
+        </div>
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <h1 class="text-2xl font-bold mb-6">Edit Model</h1>
+            <form method="POST" action="{{ url_for('edit_model', model_id=model[0]) }}" class="w-full">
+                <label for="manufacturer_id" class="block mb-2">Manufacturer</label>
+                <select name="manufacturer_id" id="manufacturer_id" required class="p-2 border border-gray-300 rounded w-full mb-4">
+                    <option value="">Select Manufacturer</option>
+                    {% for manufacturer in manufacturers %}
+                        <option value="{{ manufacturer[0] }}" {% if manufacturer[0] == model[3] %} selected {% endif %}>{{ manufacturer[1] }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="model_name" class="block mb-2">Model Name</label>
+                <input type="text" name="model_name" value="{{ model[1] }}" required class="p-2 border border-gray-300 rounded w-full mb-4" />
+
+                <label for="model_type" class="block mb-2">Model Type</label>
+                <input type="text" name="model_type" value="{{ model[2] }}" required class="p-2 border border-gray-300 rounded w-full mb-4" />
+
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Update Model</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

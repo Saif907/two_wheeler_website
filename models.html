@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Models</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="bg-gray-800 text-white w-64 h-screen">
+            <div class="text-white text-2xl font-bold p-4 bg-blue-600">
+                Admin Panel
+            </div>
+            <nav class="mt-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_manufacturers') }}">
+                            <i class="fas fa-industry"></i>
+                            <span>Make</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_models') }}">
+                            <i class="fas fa-car"></i>
+                            <span>Models</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_locations') }}">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('user_requests') }}">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_products') }}">
+                            <i class="fas fa-box"></i>
+                            <span>Products</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="#">
+                            <i class="fas fa-concierge-bell"></i>
+                            <span>Services</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_blog') }}">
+                            <i class="fas fa-blog"></i>
+                            <span>Blog</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <h1 class="text-2xl font-bold mb-6">Manage Models</h1>
+
+            <!-- Add New Model Button -->
+            <a href="{{ url_for('add_model') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-6 inline-block">Add New Model</a>
+
+            <!-- Search and Filter -->
+            <form method="GET" action="/admin/models" class="mb-6 flex items-center space-x-4">
+                <input type="text" name="search" placeholder="Search Models" value="{{ search_query }}" class="p-2 border border-gray-300 rounded" />
+                <select name="manufacturer_id" class="p-2 border border-gray-300 rounded">
+                    <option value="">Filter by Manufacturer</option>
+                    {% for manufacturer in manufacturers %}
+                        <option value="{{ manufacturer[0] }}" {% if manufacturer[0] == selected_manufacturer %} selected {% endif %}>{{ manufacturer[1] }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filter</button>
+            </form>
+
+            <table class="w-full table-auto border-collapse">
+                <thead>
+                    <tr class="bg-gray-800 text-white">
+                        <th class="px-4 py-2">Model Name</th>
+                        <th class="px-4 py-2">Type</th>
+                        <th class="px-4 py-2">Manufacturer</th>
+                        <th class="px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for model in models %}
+                    <tr class="border-b">
+                        <td class="px-4 py-2">{{ model[1] }}</td>
+                        <td class="px-4 py-2">{{ model[2] }}</td>
+                        <td class="px-4 py-2">{{ model[3] }}</td>
+                        <td class="px-4 py-2">
+                            <a href="{{ url_for('edit_model', model_id=model[0]) }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a> |
+                            <form action="{{ url_for('delete_model', model_id=model[0]) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this model?');">
+                                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

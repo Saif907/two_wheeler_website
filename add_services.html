@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - Add New Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="bg-gray-800 text-white w-64 h-screen">
+            <div class="text-white text-2xl font-bold p-4 bg-blue-600">
+                Admin Panel
+            </div>
+            <nav class="mt-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center space-x-2 hover:bg-gray-700 p-4 rounded" href="{{ url_for('manage_services') }}">
+                            <i class="fas fa-concierge-bell"></i>
+                            <span>Services</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <h2 class="text-2xl font-bold mb-6">Add New Service</h2>
+            <form action="{{ url_for('add_service') }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow">
+                <!-- Service Name -->
+                <div class="mb-4">
+                    <label class="block text-gray-700">Service Name</label>
+                    <input type="text" name="name" class="w-full border border-gray-300 rounded px-4 py-2" required>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <label class="block text-gray-700">Description</label>
+                    <textarea name="description" class="w-full border border-gray-300 rounded px-4 py-2" required></textarea>
+                </div>
+
+                <!-- Category -->
+                <div class="mb-4">
+                    <label class="block text-gray-700">Category</label>
+                    <select name="category_id" class="w-full border border-gray-300 rounded px-4 py-2" required>
+                        {% for category in categories %}
+                            <option value="{{ category[0] }}">{{ category[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Manufacturer -->
+                <div class="mb-4">
+                    <label class="block text-gray-700">Manufacturer</label>
+                    <select name="manufacturer_id" id="manufacturer_id" class="w-full border border-gray-300 rounded px-4 py-2" required>
+                        <option value="">Select Manufacturer</option>
+                        {% for manufacturer in manufacturers %}
+                            <option value="{{ manufacturer[0] }}">{{ manufacturer[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Model -->
+                <div class="mb-4">
+                    <label class="block text-gray-700">Model</label>
+                    <select name="model_id" id="model_id" class="w-full border border-gray-300 rounded px-4 py-2" required>
+                        <option value="">Select Model</option>
+                    </select>
+                </div>
+
+                <!-- Price -->
+                <div class="mb-4">
+                    <label class="block text-gray-700">Price</label>
+                    <input type="number" name="price" step="0.01" class="w-full border border-gray-300 rounded px-4 py-2" required>
+                </div>
+
+                <!-- Duration -->
+                <div class="mb-4">
+                    <label class="block text-gray-700">Duration (in hrs)</label>
+                    <input type="number" name="duration" class="w-full border border-gray-300 rounded px-4 py-2">
+                </div>
+
+                <!-- Image -->
+                <div class="mb-4">
+                    <label class="block text-gray-700">Upload Image</label>
+                    <input type="file" name="image_url" accept="image/*" class="w-full border border-gray-300 rounded px-4 py-2">
+                
+
+                </div>
+
+                <!-- Location -->
+                <div class="mb-4">
+                    <label class="block text-gray-700">Location</label>
+                    <select name="location_id" class="w-full border border-gray-300 rounded px-4 py-2" required>
+                        {% for location in locations %}
+                            <option value="{{ location[0] }}">{{ location[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save Service</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        // Fetch models based on selected manufacturer
+        document.getElementById('manufacturer_id').addEventListener('change', function() {
+            var manufacturerId = this.value;
+            if (!manufacturerId) return;
+
+            fetch(`/admin/manage_services/get_models/${manufacturerId}`)
+                .then(response => response.json())
+                .then(data => {
+                    var modelSelect = document.getElementById('model_id');
+                    modelSelect.innerHTML = '';  // Clear existing options
+                    var defaultOption = document.createElement('option');
+                    defaultOption.textContent = 'Select a model';
+                    modelSelect.appendChild(defaultOption);
+
+                    if (data.length === 0) {
+                        var option = document.createElement('option');
+                        option.textContent = "No models available";
+                        modelSelect.appendChild(option);
+                    } else {
+                        data.forEach(function(model) {
+                            var option = document.createElement('option');
+                            option.value = model.model_id;
+                            option.textContent = model.ModelName;
+                            modelSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching models:", error);
+                });
+        });
+    </script>
+</body>
+</html>

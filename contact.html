@@ -1,0 +1,125 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Contact Us - Scooty Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        /* Custom styles for dropdown */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+        .dropdown-menu {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-gray-800 text-white p-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <img alt="My Mechanic Logo" class="mr-2" height="40" src="https://storage.googleapis.com/a1aa/image/rcoLJHV4rvp2BhXrJVzZuIHemGYf29fD96GJJjzck5iTWxCoA.jpg" width="40"/>
+            <span class="text-xl font-bold">My Mechanic</span>
+        </div>
+        <nav class="flex items-center space-x-4">
+            <a class="text-white flex items-center" href="/">
+                <i class="fas fa-home mr-2"></i>Home
+            </a>
+            <a class="text-white flex items-center" href="blog">
+                <i class="fas fa-blog mr-2"></i>Blog
+            </a>
+            <div class="relative dropdown">
+                <a class="text-white flex items-center cursor-pointer">
+                    <i class="fas fa-ellipsis-h mr-2"></i>More
+                </a>
+                <div class="absolute dropdown-menu bg-white text-gray-800 shadow-lg rounded mt-2 w-48">
+                    <a class="block px-4 py-2 hover:bg-gray-200" href="faq">FAQ</a>
+                    <a class="block px-4 py-2 hover:bg-gray-200" href="products">Products</a>
+                    <a class="block px-4 py-2 hover:bg-gray-200" href="contact">Contact Us</a>
+                </div>
+            </div>
+            <a class="text-white flex items-center" href="store">
+                <i class="fas fa-store mr-2"></i>Store
+            </a>
+            <a class="bg-red-600 text-white px-4 py-2 rounded" href="#">Login</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Contact Us</h1>
+        <div class="bg-white shadow-lg rounded-lg p-6">
+            <form action="/submit_contact" method="POST">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="name">Name</label>
+                    <input class="w-full p-2 border border-gray-300 rounded" id="name" name="name" placeholder="Your Name" type="text" required/>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="email">Email</label>
+                    <input class="w-full p-2 border border-gray-300 rounded" id="email" name="email" placeholder="Your Email" type="email" required/>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="subject">Subject</label>
+                    <input class="w-full p-2 border border-gray-300 rounded" id="subject" name="subject" placeholder="Subject" type="text" required/>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="message">Message</label>
+                    <textarea class="w-full p-2 border border-gray-300 rounded" id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                </div>
+                <button class="w-full bg-red-600 text-white p-2 rounded" type="submit">Send Message</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-semibold">My Mechanic</h3>
+                    <p class="text-gray-400">Your trusted partner for two-wheeler services.</p>
+                </div>
+                <div class="space-x-4">
+                    <a class="text-gray-400 hover:text-white" href="#">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a class="text-gray-400 hover:text-white" href="#">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a class="text-gray-400 hover:text-white" href="#">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a class="text-gray-400 hover:text-white" href="#">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-6 text-center text-gray-400">
+                © 2023 My Mechanic. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Ensure dropdown menu stays open on hover
+        document.querySelectorAll('.dropdown').forEach(dropdown => {
+            dropdown.addEventListener('mouseenter', function() {
+                const dropdownMenu = this.querySelector('.dropdown-menu');
+                dropdownMenu.style.display = 'block';
+            });
+            dropdown.addEventListener('mouseleave', function() {
+                const dropdownMenu = this.querySelector('.dropdown-menu');
+                dropdownMenu.style.display = 'none';
+            });
+        });
+
+        // Ensure dropdown menu stays open when moving between "More" and options
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.addEventListener('mouseenter', function() {
+                this.style.display = 'block';
+            });
+            menu.addEventListener('mouseleave', function() {
+                this.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

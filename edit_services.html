@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Service</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-semibold text-center mb-6">Edit Service</h1>
+        
+        <form method="POST" action="{{ url_for('update_service', service_id=service['service_id']) }}">
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-gray-700">Service Name</label>
+                <input type="text" id="name" name="name" value="{{ service['name'] }}" required class="mt-1 p-2 w-full border border-gray-300 rounded-md">
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea id="description" name="description" rows="4" required class="mt-1 p-2 w-full border border-gray-300 rounded-md">{{ service['description'] }}</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                <input type="number" id="price" name="price" value="{{ service['price'] }}" required step="0.01" class="mt-1 p-2 w-full border border-gray-300 rounded-md">
+            </div>
+
+            <div class="mb-4">
+                <label for="duration" class="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+                <input type="number" id="duration" name="duration" value="{{ service['duration'] }}" required class="mt-1 p-2 w-full border border-gray-300 rounded-md">
+            </div>
+
+            <div class="mb-4">
+                <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                <select id="category" name="category_id" required class="mt-1 p-2 w-full border border-gray-300 rounded-md">
+                    <option value="{{ service['category_id'] }}" selected>{{ service['category_name'] }}</option>
+                    <!-- Add options for other categories here -->
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+                <select id="location" name="location_id" required class="mt-1 p-2 w-full border border-gray-300 rounded-md">
+                    <option value="{{ service['location_id'] }}" selected>{{ service['location_name'] }}</option>
+                    <!-- Add options for other locations here -->
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="image_url" class="block text-sm font-medium text-gray-700">Image URL</label>
+                <input type="text" id="image_url" name="image_url" value="{{ service['image_url'] }}" class="mt-1 p-2 w-full border border-gray-300 rounded-md">
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Update Service</button>
+            </div>
+        </form>
+
+        <div class="mt-6 text-center">
+            <a href="{{ url_for('manage_services') }}" class="text-blue-600 hover:underline">Back to Services List</a>
+        </div>
+    </div>
+</body>
+</html>

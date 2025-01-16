@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Cart - My Mechanic</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4">
+        <div class="container mx-auto flex justify-between items-center px-5">
+            <div class="flex items-center">
+                <img alt="Logo" class="h-10 w-10 mr-2" src="https://placehold.co/40x40" />
+                <span class="text-white text-xl font-bold">My Mechanic</span>
+            </div>
+            <div class="hidden md:flex space-x-4">
+                <a class="text-white flex items-center" href="#"><i class="fas fa-home mr-1"></i>Home</a>
+                <a class="text-white flex items-center" href="#"><i class="fas fa-blog mr-1"></i>Blog</a>
+                <a class="text-white flex items-center" href="#"><i class="fas fa-shopping-cart mr-1"></i>Shop</a>
+                <a class="text-white flex items-center" href="#"><i class="fas fa-ellipsis-h mr-1"></i>More</a>
+                <a class="bg-red-600 text-white px-4 py-2 rounded" href="#">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto mt-6 px-4">
+        <h2 class="text-2xl font-bold mb-4">Your Cart</h2>
+
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+            <ul id="cart-items" class="list-disc pl-5">
+                <!-- Cart items will be inserted here by JS -->
+            </ul>
+            <div class="mt-4">
+                <p class="font-bold">Total: ₹<span id="cart-total">0.00</span></p>
+            </div>
+            <div class="mt-4">
+                <a href="/" class="bg-blue-600 text-white px-4 py-2 rounded w-full text-center">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cartItemsElement = document.getElementById('cart-items');
+            const cartTotalElement = document.getElementById('cart-total');
+
+            fetch('/get_cart')
+                .then(response => response.json())
+                .then(data => {
+                    const cartItems = data.cart_data;
+                    let total = 0;
+                    cartItemsElement.innerHTML = '';
+                    cartItems.forEach(item => {
+                        const li = document.createElement('li');
+                        li.classList.add('flex', 'justify-between', 'items-center', 'py-2');
+                        li.innerHTML = `<span>${item.service}</span><span>₹${item.total_price}</span>`;
+                        cartItemsElement.appendChild(li);
+                        total += parseFloat(item.total_price);
+                    });
+                    cartTotalElement.innerText = total.toFixed(2);
+                });
+        });
+    </script>
+
+</body>
+</html>
